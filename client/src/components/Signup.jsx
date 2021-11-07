@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Progress, Text, Input, InputGroup, show, InputRightElement, Button } from "@chakra-ui/react"
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'
 
 export default function Singup() {
 
@@ -9,6 +10,7 @@ export default function Singup() {
     const [show, setShow] = useState(false)
     const [resRecieved,setResRecieved] = useState();
     const [error,setError] = useState("");
+    const navigate = useNavigate()
 
     const [form, setForm] = useState({
         firstname: "",
@@ -30,8 +32,8 @@ export default function Singup() {
         setResRecieved(false);
         axios.post('/api/user',body)
             .then((res)=>{
-                console.log(res.data)
                 setResRecieved(true)
+                navigate('/login')
             })
             .catch((err)=>{
                 setResRecieved(true);

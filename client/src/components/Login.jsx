@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios'
 import { useSelector, useDispatch } from 'react-redux'
 import {login} from '../loginSlice'
+import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
 
@@ -12,6 +13,7 @@ export default function Login() {
     const dispatch = useDispatch()
     const [error,setError] = useState("")
     const [resRecieved,setResRecieved] = useState()
+    const navigate = useNavigate();
 
     const [form, setForm] = useState({
         first: "",
@@ -31,14 +33,14 @@ export default function Login() {
         axios.post('api/user/login', form)
             .then((res) => {
                 setResRecieved(true)
-                const user = res.data;
-                dispatch(login({isLoggedIn:true,user}))
+                const accessToken = res.data;
+                dispatch(login({isLoggedIn:true,accessToken}))
+                navigate('/')
             })
             .catch((err)=>{
                 if(err.response.status===400){
                     setError(err.response.data)
                     setResRecieved(true)
-                
                 }
             })
     }

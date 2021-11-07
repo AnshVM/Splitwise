@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const uniqueVlidator = require('mongoose-unique-validator');
 const validator = require('validator')
 const userSchema = new mongoose.Schema({
     username:{
@@ -25,10 +24,11 @@ const userSchema = new mongoose.Schema({
         required:[true,'Password is required'],
         type:String
     },
-    expenses:[String]
+    balances:[String]
 })
 
-userSchema.plugin(uniqueVlidator);
+userSchema.index({username: 'text',firstname:'text',lastname:'text'});
+
 
 const User = new mongoose.model('User',userSchema);
 
