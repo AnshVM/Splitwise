@@ -26,7 +26,17 @@ exports.getCurrentUserBalances = async (req,res) => {
     const userBalances = [];
     for(let i=0;i<user.balances.length;i++){
         const balance = await Balance.findById(user.balances[i]);
-        userBalances.push(balance)
+        const name = balance.name;
+        const amount = balance.balance * (req.userId===balance.positiveBalanceUser?1:-1);
+        const {firstname,lastname,username} = req.userId===balance.positiveBalanceUser?await User.findById(balance.negativeBalanceUser):await User.findById(balance.positiveBalanceUser)                      
+        userBalances.push({name,amount,firstname,lastname,username})
     }
     res.status(200).json(userBalances)
 }
+
+//name, amount(+,-), other user fname,lname,uname
+
+// positiveBalanceUser:String,
+// negativeBalanceUser:String,
+// balance:Number,
+// name:String
