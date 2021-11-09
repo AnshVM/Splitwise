@@ -124,12 +124,10 @@ export default function CreateExpense({ firstname, userId }) {
 
         const name = form.name
         const negativeBalanceUser = userId;
-        var balance;
+        let balance=0;
         const totalAmount = form.amount
-        console.log(form)
-        if (menuState === "Percentage Share") {
+        if (menuState === "Percentage share") {
             const share = form.percentageShare;
-            console.log('HERE')
             balance = totalAmount - (share / 100) * totalAmount
         }
         else if (menuState === "Exact share") {
@@ -138,9 +136,7 @@ export default function CreateExpense({ firstname, userId }) {
         else if (menuState === "Split equally") {
             balance = totalAmount / 2
         }
-
-        console.log(balance)
-
+        
         axios.post('/api/balance/', { name, negativeBalanceUser, balance }, {
             headers: {
                 Authorization: "Bearer " + accessToken

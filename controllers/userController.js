@@ -56,7 +56,6 @@ exports.login = async (req, res) => {
             if (err === "UsernameNotFound") {
                 User.findOne({ email: first })
                     .then(async (user) => {
-                        console.log("User: " + JSON.stringify(user))
                         if (!user) throw "EmailNotFound"
                         else checkPasswordAndSendToken(password, user, res);
                     })
@@ -68,11 +67,12 @@ exports.login = async (req, res) => {
         })
 }
 
-exports.userSearch = (req,res) => {
+exports.userSearch = async(req,res) => {
     const {query} = req.params;
-    console.log(query)
+    const user = await User.findById(req.userId)
     User.find({$text: {$search: query}})
        .exec(function(err, docs) {
+        docs = docs.filter(doc => !doc._id.equals(user._id))
         res.json(docs)
     });
 }

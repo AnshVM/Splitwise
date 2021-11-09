@@ -11,7 +11,7 @@ import {useEffect,useState} from 'react'
 function App() {
 
   const navigate = useNavigate()
-  const [query,setQuery] = useState("")
+  const [query,setQuery] = useState()
 
   const isLoggedIn = useSelector(state => state.loginState.isLoggedIn)
   
