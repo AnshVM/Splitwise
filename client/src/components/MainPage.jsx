@@ -29,6 +29,7 @@ import {
 function PayBack({max,balanceId}) {
 
     const accessToken = useSelector((state)=>state.loginState.accessToken)
+    const { isOpen, onOpen, onClose } = useDisclosure()
 
     const handlePayBack = () => {
         const amountPaid = document.getElementById('amount').value
@@ -43,9 +44,9 @@ function PayBack({max,balanceId}) {
             .catch((err)=>{
                 console.log(err.response.data)
             })
+            onClose()
     }
 
-    const { isOpen, onOpen, onClose } = useDisclosure()
     return (
       <>
         <Button onClick={onOpen} className="pb-0 mb-0" colorScheme="green">Pay back</Button>

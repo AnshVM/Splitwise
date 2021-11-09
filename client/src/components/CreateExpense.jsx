@@ -136,7 +136,7 @@ export default function CreateExpense({ firstname, userId }) {
         else if (menuState === "Split equally") {
             balance = totalAmount / 2
         }
-        
+
         axios.post('/api/balance/', { name, negativeBalanceUser, balance }, {
             headers: {
                 Authorization: "Bearer " + accessToken
@@ -156,7 +156,7 @@ export default function CreateExpense({ firstname, userId }) {
             .catch((err) => {
                 console.log(err.response.data)
             })
-
+            navigate('/')
     }
 
 
