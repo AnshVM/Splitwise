@@ -7,7 +7,7 @@ import {
 } from "@chakra-ui/react"
 import CreateExpense from './CreateExpense'
 import axios from 'axios'
-import { useNavigate,useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 import {
     Modal,
@@ -19,60 +19,76 @@ import {
     ModalCloseButton,
     useDisclosure,
     NumberInputField,
-    NumberInput
-  } from "@chakra-ui/react"
+    NumberInput,
+    Progress
+} from "@chakra-ui/react"
 
 
 
 
 
-function PayBack({max,balanceId}) {
+function PayBack({ max, balanceId, balances, setBalances }) {
 
-    const accessToken = useSelector((state)=>state.loginState.accessToken)
+
+    const accessToken = useSelector((state) => state.loginState.accessToken)
     const { isOpen, onOpen, onClose } = useDisclosure()
+    const [isLoading, setIsLoading] = useState(false)
 
     const handlePayBack = () => {
         const amountPaid = document.getElementById('amount').value
-        axios.put('/api/balance/'+balanceId,{amountPaid},{
-            headers:{
-                Authorization:"Bearer "+accessToken
+        setIsLoading(true)
+        axios.put('/api/balance/' + balanceId, { amountPaid }, {
+            headers: {
+                Authorization: "Bearer " + accessToken
             }
         })
-            .then((res)=>{
-                console.log(res.data)
+            .then((res) => {
+                if(res.data==="Payment settled"){
+                    setBalances((prevBalances)=>(
+                        prevBalances.filter((bal)=>bal._id!==balanceId)
+                    ))
+                    return 
+                }
+                setBalances((prevBalances) => (
+                    prevBalances.map((bal)=>{
+                        return bal._id===res.data._id ? {...bal,amount:-res.data.balance} : bal
+                    })
+                ))
+                setIsLoading(false)
             })
-            .catch((err)=>{
+            .catch((err) => {
                 console.log(err.response.data)
             })
-            onClose()
+        onClose()
     }
 
     return (
-      <>
-        <Button onClick={onOpen} className="pb-0 mb-0" colorScheme="green">Pay back</Button>
-        <Modal isOpen={isOpen} onClose={onClose}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Clear Expenses</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-                <NumberInput>
-                    <NumberInputField id="amount" max={max} placeholder="Amount" size="lg"/>
-                </NumberInput>
-            </ModalBody>
-            <ModalFooter>
-              <Button mr={3} onClick={onClose}>
-                Cancel
-              </Button>
-              <Button onClick={handlePayBack} colorScheme="blue">Pay</Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-      </>
+        <>
+            <Button onClick={onOpen} className="pb-0 mb-0" colorScheme="green">Pay back</Button>
+            <Modal isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Clear Expenses</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <NumberInput>
+                            <NumberInputField id="amount" max={max} placeholder="Amount" size="lg" />
+                        </NumberInput>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button mr={3} onClick={onClose}>
+                            Cancel
+                        </Button>
+                        <Button onClick={handlePayBack} colorScheme="blue">Pay</Button>
+                        {isLoading && <Progress size="xs" isIndeterminate />}
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+        </>
     )
-  }
+}
 
-function BalanceListItem({ balance }) {
+function BalanceListItem({ balance, balances, setBalances }) {
 
     let amountStyle = ""
     if (balance.amount < 0) {
@@ -93,8 +109,8 @@ function BalanceListItem({ balance }) {
                 </div>
             </div>
             <div className="flex flex-row-reverse gap-x-4 pb-0 mb-0">
-                {balance.amount<0 && <PayBack max={balance.amount} balanceId={balance._id}/>}
-                <p className={amountStyle+" pt-2"}>{balance.amount}</p>
+                {balance.amount < 0 && <PayBack balances={balances} setBalances={setBalances} max={balance.amount} balanceId={balance._id} />}
+                <p className={amountStyle + " pt-2"}>{balance.amount}</p>
             </div>
 
         </div>
@@ -102,7 +118,7 @@ function BalanceListItem({ balance }) {
 }
 
 
-export default function MainPage({query,setQuery}) {
+export default function MainPage({ query, setQuery }) {
 
     const navigate = useNavigate()
     const location = useLocation()
@@ -154,11 +170,11 @@ export default function MainPage({query,setQuery}) {
             <h1 className="font-bold text-2xl text-center">🏄‍♂️  Splitwise</h1>
             <div className="pl-40">
                 <div>
-                    <Input value={query} onChange={(e)=>{setQuery(e.target.value)}} className="pt-2" id="search" onKeyPress={handleKeyPress} variant="outline" className="mt-5" w="66.66%" placeholder="Search" />
+                    <Input value={query} onChange={(e) => { setQuery(e.target.value) }} className="pt-2" id="search" onKeyPress={handleKeyPress} variant="outline" className="mt-5" w="66.66%" placeholder="Search" />
                     <Button className="bottom-1 ml-2" onClick={handleSearch} colorScheme="blue">Search</Button>
                 </div>
                 <div className="flex flex-col mt-1 w-2/3" >
-                    {balances && balances.map((balance) => <BalanceListItem key={balance._id} balance={balance} />)}
+                    {balances && balances.map((balance) => <BalanceListItem balances={balances} setBalances={setBalances} key={balance._id} balance={balance} />)}
                 </div>
             </div>
         </div>

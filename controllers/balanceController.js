@@ -47,7 +47,7 @@ exports.recordPayment = async (req, res) => {
         await positiveBalanceUserDoc.save()
         Balance.deleteOne(balance, (err) => {
             if (err) console.log(err)
-            return res.status(204).json("Payment settled")
+            return res.status(200).json("Payment settled")
         })
         return
     }
