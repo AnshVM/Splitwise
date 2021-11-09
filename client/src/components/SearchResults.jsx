@@ -39,7 +39,7 @@ export default function SearchResults({query,setQuery}) {
 
     const handleSearch = () => {
         console.log('HERE:'+query)
-        axios.get('/api/user/' + query, {
+        axios.get('/api/user/search/' + query, {
             headers: {
                 Authorization: "Bearer " + accessToken
             }

@@ -5,9 +5,9 @@ const jwt = require('jsonwebtoken')
 exports.signup = async (req, res) => {
     const { firstname, lastname, username, email, password } = req.body;
     bcrypt.genSalt(10, function (err, salt) {
-        if(err) console.log(err)
+        if (err) console.log(err)
         bcrypt.hash(password, salt, function (err2, hash) {
-            if(err2) console.log(err2)
+            if (err2) console.log(err2)
             const user = new User({
                 firstname,
                 lastname,
@@ -24,10 +24,10 @@ exports.signup = async (req, res) => {
                     return res.status(201).json("New user created");
                 })
                 .catch((err) => {
-                        if (err.keyValue.username)
-                            return res.status(400).json(`Account with this username already exists`)
-                        if (err.keyValue.email)
-                            return res.status(400).json(`Account with this email already exists`)
+                    if (err.keyValue.username)
+                        return res.status(400).json(`Account with this username already exists`)
+                    if (err.keyValue.email)
+                        return res.status(400).json(`Account with this email already exists`)
                 })
         });
     });
@@ -41,6 +41,7 @@ const checkPasswordAndSendToken = async (password, user, res) => {
             }
             const payload = { id: user._id };
             const accessToken = await jwt.sign(payload, process.env.SECRET_KEY)
+            res.cookie('accessToken',accessToken, {httpOnly: true, secure:true, maxAge:3600000*24})
             return res.status(200).json(accessToken);
         })
 }
@@ -67,18 +68,39 @@ exports.login = async (req, res) => {
         })
 }
 
-exports.userSearch = async(req,res) => {
-    const {query} = req.params;
+exports.userSearch = async (req, res) => {
+    const { query } = req.params;
     const user = await User.findById(req.userId)
-    User.find({$text: {$search: query}})
-       .exec(function(err, docs) {
-        docs = docs.filter(doc => !doc._id.equals(user._id))
-        res.json(docs)
-    });
+    User.find({ $text: { $search: query } })
+        .exec(function (err, docs) {
+            docs = docs.filter(doc => !doc._id.equals(user._id))
+            res.json(docs)
+        });
 }
 
-exports.getUserById = async (req,res) => {
+exports.getUserById = async (req, res) => {
     const user = await User.findById(req.params.id)
     user.password = undefined;
     res.status(200).json(user)
+}
+
+exports.getUserByToken = async (req, res) => {
+    if (req.cookies.accessToken) {
+        const token = req.cookies.accessToken;
+        jwt.verify(token, process.env.SECRET_KEY, async(err, result) => {
+            if (err)
+                return res.status(401).json("Token invalid")
+            const user = await User.findById(result.id)
+            if(!user) return res.status(401).json("User not found")
+            res.status(200).json(token)
+        })
+    }
+    else {
+        return res.status(401).json("Token not found")
+    }
+}
+
+exports.logout = (req,res) => {
+    res.clearCookie('accessToken');
+    res.status(200).json("Logged out")
 }

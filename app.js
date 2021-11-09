@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const apiRouter = require('./routes/index')
+const cookieParser = require('cookie-parser')
 
 const app = express();
 
@@ -16,7 +17,7 @@ mongoose
     .catch(()=>console.log("Cannot connect to DB"))
 
 app.use(express.json());
-
+app.use(cookieParser())
 app.use('/api',apiRouter);
 
 const port = process.env.PORT;

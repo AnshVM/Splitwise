@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector,useDispatch } from 'react-redux'
+import {login} from '../loginSlice'
 import {
     Avatar,
     Input,
     Button,
 } from "@chakra-ui/react"
-import CreateExpense from './CreateExpense'
 import axios from 'axios'
 import { useNavigate, useLocation } from 'react-router-dom'
 
@@ -23,13 +23,7 @@ import {
     Progress
 } from "@chakra-ui/react"
 
-
-
-
-
 function PayBack({ max, balanceId, balances, setBalances }) {
-
-
     const accessToken = useSelector((state) => state.loginState.accessToken)
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [isLoading, setIsLoading] = useState(false)
@@ -125,6 +119,7 @@ export default function MainPage({ query, setQuery }) {
     const accessToken = useSelector((state) => state.loginState.accessToken)
     const [searchResults, setSearchResults] = useState()
     const [balances, setBalances] = useState() //fname,lname,name,balance
+    const dispatch = useDispatch()
 
     const handleKeyPress = (event) => {
         if (event.key === 'Enter') {
@@ -135,7 +130,7 @@ export default function MainPage({ query, setQuery }) {
 
     const handleSearch = () => {
         const query = document.getElementById('search').value
-        axios.get('/api/user/' + query, {
+        axios.get('/api/user/search/' + query, {
             headers: {
                 Authorization: "Bearer " + accessToken
             }
@@ -164,15 +159,30 @@ export default function MainPage({ query, setQuery }) {
             })
     }, [])
 
+    const handleLogout = () => {
+        axios.get('/api/user/logout',{
+            headers:{
+                Authorization:"Bearer "+accessToken
+            }
+        })
+        .then((res)=>{
+            console.log(res.data)
+            dispatch(login({isLoggedIn:false,accessToken:undefined}))
+            navigate('/login')
+        })
+        .catch((err)=>console.log(err))
+    }
+    
 
     return (
-        <div className="mt-10 flex flex-col w-2/3 m-auto">
+        <div className="mt-10 flex flex-col w-2/3 m-auto ">
             <h1 className="font-bold text-2xl text-center">🏄‍♂️  Splitwise</h1>
             <div className="pl-40">
                 <div>
                     <Input value={query} onChange={(e) => { setQuery(e.target.value) }} className="pt-2" id="search" onKeyPress={handleKeyPress} variant="outline" className="mt-5" w="66.66%" placeholder="Search" />
                     <Button className="bottom-1 ml-2" onClick={handleSearch} colorScheme="blue">Search</Button>
-                </div>
+                    <Button onClick={handleLogout} className="bottom-1 ml-2">Logout</Button>
+                </div> 
                 <div className="flex flex-col mt-1 w-2/3" >
                     {balances && balances.map((balance) => <BalanceListItem balances={balances} setBalances={setBalances} key={balance._id} balance={balance} />)}
                 </div>
