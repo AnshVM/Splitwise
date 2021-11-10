@@ -255,15 +255,15 @@ export default function MainPage({ query, setQuery }) {
 
 
     return (
-        <div className="mt-10 flex flex-col w-2/3 m-auto ">
+        <div className="mt-10 flex flex-col md:w-4/5 lg:w-2/3 m-auto ">
             <h1 className="font-bold text-2xl text-center">🏄‍♂️  Splitwise</h1>
-            <div className="pl-40">
-                <div>
-                    <Input value={query} onChange={(e) => { setQuery(e.target.value) }} className="pt-2" id="search" onKeyPress={handleKeyPress} variant="outline" className="mt-5" w="66.66%" placeholder="Search" />
+            <div className="lg:pl-40">
+                <div >
+                    <Input className="mt-5" w="66.66%" value={query} onChange={(e) => { setQuery(e.target.value) }}  id="search" onKeyPress={handleKeyPress} variant="outline"  placeholder="Search" />
                     <Button className="bottom-1 ml-2" onClick={handleSearch} colorScheme="blue">Search</Button>
                     <Button onClick={handleLogout} className="bottom-1 ml-2">Logout</Button>
                 </div>
-                <div className="flex flex-col mt-1 w-2/3" >
+                <div className="flex flex-col mt-1 lg:w-2/3" >
                     {balances && balances.map((balance) => <BalanceListItem setFirstname={setFirstname} setIsAlertOpen={setIsAlertOpen} isAlertOpen={isAlertOpen} onAlertClose={onAlertClose} balances={balances} setBalances={setBalances} key={balance._id} balance={balance} />)}
                 </div>
             </div>

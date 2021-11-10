@@ -55,14 +55,14 @@ export default function SearchResults({query,setQuery}) {
     useEffect(()=>{handleSearch()},[])
 
     return (
-        <div className="mt-10 flex flex-col w-2/3 m-auto">
+        <div className=" flex flex-col lg:w-2/3 md:mx-auto lg:mx-auto mt-10">
             <h1 className="font-bold text-2xl text-center">🏄‍♂️  Splitwise</h1>
-            <div className="pl-40">
+            <div className="px-5 lg:pl-40">
                 <div>
                     <Input value={query} onChange={(e)=>{setQuery(e.target.value)}}  className="pt-2" id="search" onKeyPress={handleKeyPress} variant="outline" className="mt-5" w="66.66%" placeholder="Search" />
                     <Button className="bottom-1 ml-2" onClick={handleSearch} colorScheme="blue">Search</Button>
                 </div>
-                <div className="flex flex-col gap-5 mt-5 w-2/3" >
+                <div className="flex flex-col gap-5 mt-5 lg:w-2/3" >
                     {searchResults && searchResults.map((user) => <UserListItem key={user._id} user={user} />)}
                 </div>
             </div>
