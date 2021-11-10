@@ -11,7 +11,7 @@ import { login } from './loginSlice'
 
 function App() {
 
-  const [query, setQuery] = useState()
+  const [query, setQuery] = useState("")
   const navigate = useNavigate()
   const dispatch = useDispatch()
 

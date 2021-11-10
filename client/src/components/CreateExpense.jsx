@@ -137,7 +137,7 @@ export default function CreateExpense({ firstname, userId }) {
             balance = totalAmount / 2
         }
 
-        axios.post('/api/balance/', { name, negativeBalanceUser, balance }, {
+        axios.post('/api/balance/', { name, negativeBalanceUser, amount:balance }, {
             headers: {
                 Authorization: "Bearer " + accessToken
             }

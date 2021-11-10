@@ -1,5 +1,11 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
+
+const balanceSchema = new mongoose.Schema({
+    id:String,
+    userId:String
+})
+
 const userSchema = new mongoose.Schema({
     username:{
         required:[true,'Username is required'],
@@ -24,7 +30,7 @@ const userSchema = new mongoose.Schema({
         required:[true,'Password is required'],
         type:String
     },
-    balances:[String]
+    balances:[balanceSchema]
 })
 
 userSchema.index({username: 'text',firstname:'text',lastname:'text'});
