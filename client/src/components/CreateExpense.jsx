@@ -113,6 +113,8 @@ export default function CreateExpense({ firstname, userId }) {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [menuState, setMenuState] = useState("Split by")
     const navigate = useNavigate()
+    const [error,setError] = useState("")
+
     const [form, setForm] = useState({
         name: "",
         amount: 0,
@@ -126,11 +128,25 @@ export default function CreateExpense({ firstname, userId }) {
         const negativeBalanceUser = userId;
         let balance=0;
         const totalAmount = form.amount
+
+        if(totalAmount<=0){
+            setError("Invalid total amount")
+            return
+        }
+
         if (menuState === "Percentage share") {
             const share = form.percentageShare;
+            if(share<=0 || share>=100){
+                setError("Percentage should be between 0 and 100")
+                return
+            }
             balance = totalAmount - (share / 100) * totalAmount
         }
         else if (menuState === "Exact share") {
+            if(form.exactShare>=totalAmount || form.exactShare<=0){
+                setError("Invalid exact share")
+                return
+            }
             balance = totalAmount - form.exactShare
         }
         else if (menuState === "Split equally") {
@@ -183,7 +199,7 @@ export default function CreateExpense({ firstname, userId }) {
                         </Menu>
 
                         <ExpenseForm form={form} setForm={setForm} firstname={firstname} expenseType={menuState} />
-
+                        <p className="text-center font-semibold text-gray-600">{error}</p>
                     </ModalBody>
 
                     <ModalFooter>
