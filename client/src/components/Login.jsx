@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { Progress, Text, Input, InputGroup, show, InputRightElement, Button } from "@chakra-ui/react"
+import { Progress, Text, Input, InputGroup,InputRightElement, Button } from "@chakra-ui/react"
 import { Link } from 'react-router-dom';
 import axios from 'axios'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import {login} from '../loginSlice'
 import { useNavigate } from 'react-router-dom';
 
@@ -47,7 +47,7 @@ export default function Login() {
     }
     return (
         <div className="p-4 text-center mt-36 m-auto w-96 border-gray-700 border-2 ">
-            <Text className={logoStyle}>flick.gg</Text>
+            <Text className={logoStyle}>🏄‍♂️  Splitwise</Text>
             <div className="flex flex-col gap-y-5">
                 <Input id="first" value={form.first} onChange={handleFormChange} placeholder="Email or username" />
                 <InputGroup size="md">

@@ -81,7 +81,7 @@ function PaymentSettledAlert({ firstname, isAlertOpen, onAlertClose }) {
     )
 }
 
-function PayBack({ setFirstname, max, balanceId, balances, setBalances, balance, setIsAlertOpen, isAlertOpen, onAlertClose }) {
+function PayBack({ setFirstname, max, balanceId, setBalances, balance, setIsAlertOpen}) {
     const accessToken = useSelector((state) => state.loginState.accessToken)
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [isLoading, setIsLoading] = useState(false)

@@ -45,7 +45,7 @@ export default function Singup() {
 
     return (
         <div className="p-4 text-center mt-36 m-auto w-96 border-gray-700 border-2 ">
-            <Text className={logoStyle}>Splitwise</Text>
+            <Text className={logoStyle}>🏄‍♂️  Splitwise</Text>
             <div className="flex flex-col gap-y-5">
                 <div className="flex flex-row gap-x-2">
                     <Input value={form.firstname} onChange={handleFormChange} id="firstname" placeholder="First Name" />

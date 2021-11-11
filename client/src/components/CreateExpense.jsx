@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import {
-    Avatar,
     Input,
     Button,
     Modal,
@@ -14,28 +13,19 @@ import {
     useDisclosure,
     FormControl,
     FormLabel,
-    FormErrorMessage,
-    FormHelperText,
     NumberInput,
-    NumberInputField,
-    Menu,
     MenuButton,
     MenuList,
     MenuItem,
-    MenuItemOption,
-    MenuGroup,
-    MenuOptionGroup,
-    MenuIcon,
-    MenuCommand,
-    MenuDivider,
-    Chev
+    Menu,
+    NumberInputField
 } from "@chakra-ui/react"
 import { ChevronDownIcon } from '@chakra-ui/icons'
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import {socket} from '../App'
 
-function ExpenseForm({ expenseType, firstname, form, setForm }) {
+function ExpenseForm({ expenseType, form, setForm }) {
 
     if (expenseType === "Percentage share") {
 
