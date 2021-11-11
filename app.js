@@ -3,8 +3,11 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const apiRouter = require('./routes/index')
 const cookieParser = require('cookie-parser')
-
 const app = express();
+const http = require('http');
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server);
 
 dotenv.config();
 
@@ -20,7 +23,15 @@ app.use(express.json());
 app.use(cookieParser())
 app.use('/api',apiRouter);
 
+io.on('connection', (socket) => {
+    console.log(socket.handshake.query.userId)
+    socket.join(socket.handshake.query.userId)
+    socket.on('UPDATED_BALANCES',(args)=>{
+        socket.to(args).emit("UPDATED_BALANCES")
+    })
+});
+
 const port = process.env.PORT;
-app.listen(port,()=>{
+server.listen(port,()=>{
     console.log(`Server started on port ${port}`);
 })

@@ -8,13 +8,17 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { login } from './loginSlice'
+import { io } from "socket.io-client";
+import jwt_decode from 'jwt-decode'
+
+let socket
 
 function App() {
 
   const [query, setQuery] = useState("")
   const navigate = useNavigate()
   const dispatch = useDispatch()
-
+  const accessToken = useSelector((state) => state.loginState.accessToken)
   useEffect(() => {
     axios.get('/api/user/')
       .then((res) => {
@@ -25,6 +29,20 @@ function App() {
         navigate('/login')
       })
   }, [])
+
+  useEffect(() => {
+    if (accessToken) {
+      const {id} = jwt_decode(accessToken)
+      socket = io("/", {
+        auth: {
+          token: accessToken
+        },
+        query: {
+          "userId": id
+        }
+      });
+    }
+  }, [accessToken])
 
 
   return (
@@ -37,4 +55,5 @@ function App() {
   );
 }
 
-export default App;
+export {socket}
+export default App

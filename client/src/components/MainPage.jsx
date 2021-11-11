@@ -29,6 +29,8 @@ import {
     Progress
 } from "@chakra-ui/react"
 import CreateExpense from './CreateExpense'
+import { socket } from '../App'
+
 
 const getBalances = (accessToken, setBalances) => {
     axios.get('/api/balance', {
@@ -45,7 +47,7 @@ const getBalances = (accessToken, setBalances) => {
         })
 }
 
-function PaymentSettledAlert({firstname, isAlertOpen, onAlertClose}) {
+function PaymentSettledAlert({ firstname, isAlertOpen, onAlertClose }) {
 
 
     const cancelRef = React.useRef()
@@ -83,7 +85,6 @@ function PayBack({ setFirstname, max, balanceId, balances, setBalances, balance,
     const accessToken = useSelector((state) => state.loginState.accessToken)
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [isLoading, setIsLoading] = useState(false)
-    let isSettled = false
 
     const handlePayBack = () => {
         const amountPaid = document.getElementById('amount').value
@@ -99,8 +100,9 @@ function PayBack({ setFirstname, max, balanceId, balances, setBalances, balance,
                 if (res.data === "Balance settled") {
                     setFirstname(balance.firstname)
                     setIsAlertOpen(true)
-                    getBalances(accessToken,setBalances)
                 }
+                getBalances(accessToken, setBalances)
+                socket.emit("UPDATED_BALANCES", balance.userId)
             })
             .catch((err) => {
                 console.log(err)
@@ -160,7 +162,7 @@ function ExpenseListItem({ expense, balance }) {
     )
 }
 
-function BalanceListItem({ balance, balances, setBalances, setIsAlertOpen, isAlertOpen, onAlertClose,setFirstname }) {
+function BalanceListItem({ balance, balances, setBalances, setIsAlertOpen, isAlertOpen, onAlertClose, setFirstname }) {
 
 
     let amountStyle = ""
@@ -182,7 +184,7 @@ function BalanceListItem({ balance, balances, setBalances, setIsAlertOpen, isAle
                     </div>
                 </div>
                 <div className="flex flex-row-reverse gap-x-4 pb-0 mb-0">
-                <   CreateExpense userId={balance.userId} firstname={balance.firstname} />
+                    <   CreateExpense userId={balance.userId} firstname={balance.firstname} />
                     {balance.amount < 0 && <PayBack setFirstname={setFirstname} setIsAlertOpen={setIsAlertOpen} isAlertOpen={isAlertOpen} onAlertClose={onAlertClose} firstname={balance.firstname} balance={balance} balances={balances} setBalances={setBalances} max={balance.amount} balanceId={balance._id} />}
                     <p className={amountStyle + " pt-2"}>{balance.amount > 0 && "+"}{balance.amount}</p>
                 </div>
@@ -204,7 +206,14 @@ export default function MainPage({ query, setQuery }) {
     const dispatch = useDispatch()
     const [isAlertOpen, setIsAlertOpen] = useState(false)
     const onAlertClose = () => setIsAlertOpen(false)
-    const [firstname,setFirstname] = useState("")
+    const [firstname, setFirstname] = useState("")
+    
+    if(socket){
+    socket.on('UPDATED_BALANCES', () => {
+        console.log(accessToken)
+        getBalances(accessToken, setBalances)
+    })
+}
 
     console.log(isAlertOpen)
 
@@ -259,7 +268,7 @@ export default function MainPage({ query, setQuery }) {
             <h1 className="font-bold text-2xl text-center">🏄‍♂️  Splitwise</h1>
             <div className="lg:pl-40">
                 <div >
-                    <Input className="mt-5" w="66.66%" value={query} onChange={(e) => { setQuery(e.target.value) }}  id="search" onKeyPress={handleKeyPress} variant="outline"  placeholder="Search" />
+                    <Input className="mt-5" w="66.66%" value={query} onChange={(e) => { setQuery(e.target.value) }} id="search" onKeyPress={handleKeyPress} variant="outline" placeholder="Search" />
                     <Button className="bottom-1 ml-2" onClick={handleSearch} colorScheme="blue">Search</Button>
                     <Button onClick={handleLogout} className="bottom-1 ml-2">Logout</Button>
                 </div>
@@ -267,7 +276,7 @@ export default function MainPage({ query, setQuery }) {
                     {balances && balances.map((balance) => <BalanceListItem setFirstname={setFirstname} setIsAlertOpen={setIsAlertOpen} isAlertOpen={isAlertOpen} onAlertClose={onAlertClose} balances={balances} setBalances={setBalances} key={balance._id} balance={balance} />)}
                 </div>
             </div>
-            <PaymentSettledAlert isAlertOpen={isAlertOpen} onAlertClose={onAlertClose} firstname={firstname}/>
+            <PaymentSettledAlert isAlertOpen={isAlertOpen} onAlertClose={onAlertClose} firstname={firstname} />
         </div>
     )
 }

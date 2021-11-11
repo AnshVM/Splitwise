@@ -33,6 +33,7 @@ import {
 import { ChevronDownIcon } from '@chakra-ui/icons'
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
+import {socket} from '../App'
 
 function ExpenseForm({ expenseType, firstname, form, setForm }) {
 
@@ -168,6 +169,7 @@ export default function CreateExpense({ firstname, userId }) {
                     exactShare: 0
                 })
                 onClose()
+                socket.emit("UPDATED_BALANCES", negativeBalanceUser)
             })
             .catch((err) => {
                 console.log(err.response.data)

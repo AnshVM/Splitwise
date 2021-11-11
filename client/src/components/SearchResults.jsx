@@ -23,9 +23,6 @@ function UserListItem({ user }) {
     )
 }
 
-
-
-
 export default function SearchResults({query,setQuery}) {
 
     const accessToken = useSelector((state) => state.loginState.accessToken)
