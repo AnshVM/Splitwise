@@ -184,7 +184,7 @@ function BalanceListItem({ balance, balances, setBalances, setIsAlertOpen, isAle
                     </div>
                 </div>
                 <div className="flex flex-row-reverse gap-x-4 pb-0 mb-0">
-                    <   CreateExpense userId={balance.userId} firstname={balance.firstname} />
+                    <CreateExpense getBalances={getBalances} setBalances={setBalances} userId={balance.userId} firstname={balance.firstname} />
                     {balance.amount < 0 && <PayBack setFirstname={setFirstname} setIsAlertOpen={setIsAlertOpen} isAlertOpen={isAlertOpen} onAlertClose={onAlertClose} firstname={balance.firstname} balance={balance} balances={balances} setBalances={setBalances} max={balance.amount} balanceId={balance._id} />}
                     <p className={amountStyle + " pt-2"}>{balance.amount > 0 && "+"}{balance.amount}</p>
                 </div>

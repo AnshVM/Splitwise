@@ -99,7 +99,7 @@ function ExpenseForm({ expenseType, form, setForm }) {
 }
 
 
-export default function CreateExpense({ firstname, userId }) {
+export default function CreateExpense({ firstname, userId, getBalances,setBalances }) {
     const accessToken = useSelector((state) => state.loginState.accessToken)
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [menuState, setMenuState] = useState("Split by")
@@ -126,7 +126,7 @@ export default function CreateExpense({ firstname, userId }) {
         }
 
         if (menuState === "Percentage share") {
-            const share = form.percentageShare;
+            const share = Number(form.percentageShare);
             if(share<=0 || share>=100){
                 setError("Percentage should be between 0 and 100")
                 return
@@ -134,7 +134,9 @@ export default function CreateExpense({ firstname, userId }) {
             balance = totalAmount - (share / 100) * totalAmount
         }
         else if (menuState === "Exact share") {
-            if(form.exactShare>=totalAmount || form.exactShare<=0){
+            if(Number(form.exactShare)>=Number(totalAmount) || Number(form.exactShare)<=0){
+                console.log(form.exactShare)
+                console.log(totalAmount)
                 setError("Invalid exact share")
                 return
             }
@@ -160,9 +162,10 @@ export default function CreateExpense({ firstname, userId }) {
                 })
                 onClose()
                 socket.emit("UPDATED_BALANCES", negativeBalanceUser)
+                getBalances(accessToken,setBalances)
             })
             .catch((err) => {
-                console.log(err.response.data)
+                console.log(err)
             })
             navigate('/')
     }
@@ -190,7 +193,7 @@ export default function CreateExpense({ firstname, userId }) {
                             </MenuList>
                         </Menu>
 
-                        <ExpenseForm form={form} setForm={setForm} firstname={firstname} expenseType={menuState} />
+                        <ExpenseForm getBalances={getBalances} setBalances={setBalances} form={form} setForm={setForm} firstname={firstname} expenseType={menuState} />
                         <p className="text-center font-semibold text-gray-600">{error}</p>
                     </ModalBody>
 
